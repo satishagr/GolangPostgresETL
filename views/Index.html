@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+#myInput {
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+#myTable {
+  border-collapse: collapse;
+  width: 100%; 
+  border: 1px solid #ddd;
+  font-size: 18px;
+  table-layout: fixed;
+}
+
+#myTable td {
+  padding: 12px;
+  width: 100px;
+  overflow: hidden;
+  text-align: center;
+}
+
+#myTable th {
+  padding: 12px;
+  width: 100px;
+  overflow: hidden;
+  text-align: center;
+  background-color:black;
+  color:white;
+}
+
+#myTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable tr.header, #myTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+h2 {
+  text-align:center;
+}
+
+</style>
+</head>
+<body>
+
+<h2>Building Footprints Dataset</h2>
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search cells..." title="Type here">
+<div id="div1"></div>
+<table id="myTable"></table>
+
+<script type="text/javascript" charset="utf-8">
+
+//variable to store data from Db
+var dataset;
+
+//variable to store Page no.
+var pgnm = 1;
+
+//Function to fetch all the rows from Db 
+$(document).ready(function(){
+  $.get("http://localhost:8080/getall", function(data, status){
+    dataset = data;
+    drawTable(data);
+  });
+});
+
+//Function to fetch all the rows from Db
+function getall(){
+  $.get("http://localhost:8080/getall", function(data, status){
+    dataset = data;
+    drawTable(data);
+  });
+}
+
+//Function to load Db and fetch data
+function loaddata() {
+  $.get("http://localhost:8080/loaddata?row=100", function(data, status){
+  });
+  getall();
+}
+
+//Loading data based on 'DOMContentLoaded' event
+document.addEventListener( "DOMContentLoaded", loaddata, false );
+
+//Load next page
+function nextpage(){
+  pgnm = pgnm + 1;
+  if(pgnm % 10 == 0) {
+    loaddata();
+  }
+  document.getElementById('curr').innerHTML = pgnm;
+  drawTable(dataset);
+}
+
+//Load previous page
+function prevpage(){
+  pgnm = pgnm - 1;
+  document.getElementById('curr').innerHTML = pgnm;
+  drawTable(dataset);
+}
+
+//Populate table with data
+function drawTable(data) {
+  if (pgnm == 1) {
+    document.getElementById("prev").disabled = true;
+  } else {
+    document.getElementById("prev").disabled = false;
+  }
+  
+  // get the reference for div
+  var div1 = document.getElementById('div1');
+
+  // get the reference for table
+  var tbl = document.getElementById("myTable");
+  while (tbl.firstChild) {
+    tbl.removeChild(tbl.firstChild);
+  }
+  var thead = document.createElement("thead");
+  //thead.setAttribute("class", "thead-light");
+  var row = document.createElement("tr");
+  //var inp = document.createElement()
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('BASE_BBL');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('MPLUTO_BBL');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('BIN');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('NAME');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('LSTMODDATE');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('LSTSTATTYPE');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('CNSTRCT_YR');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('DOITT_ID');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('HEIGHTROOF');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('FEAT_CODE');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('GROUNDELEV');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  var cell = document.createElement("th");
+  cell.setAttribute("scope", "col");
+  var cellText = document.createTextNode('GEOM_SOURCE');
+  cell.appendChild(cellText);
+  row.appendChild(cell);
+  tbl.appendChild(row);
+  arr = data.split("\n");
+  var col = 12
+
+  for (var i = (pgnm*10)-10; i < pgnm*10; i++) {
+    var a = arr[i].toString().replace(/\s/g, "").split("))),");
+    arr[i] = [];
+    
+    arr[i][0] = a[0]+")))";
+    var temp = a[1].split(",");
+    for (var j = 1; j<=temp.length; j++) {
+      arr[i][j] = temp[j-1]
+    }
+    
+  }
+  // creating rows
+  var sum = [];
+  for (var i = 0; i<12; i++) {
+    sum[i] = 0.0;
+  }
+  var noOfRows = 0.0;
+  var tbody = document.createElement("tbody");
+  for (var r = (pgnm*10)-10; r < pgnm*10; r++) {
+    noOfRows = noOfRows + 1.0;
+    var row1 = document.createElement("tr");
+    var th1 = document.createElement("th");
+    th1.setAttribute("scope", "row")
+    // create cells in row
+    for (var c = 0; c < col; c++) {
+      var cell = document.createElement("td");
+      var cellText = document.createTextNode(arr[r][c]);
+      cell.setAttribute('title', ''+arr[r][c])
+      cell.appendChild(cellText);
+      row1.appendChild(cell);
+      if(c==2 || c==6 || c==7 || c==8 || c==9 || c==10) {
+        sum[c]=sum[c]+parseFloat(arr[r][c])
+      }
+    }           
+    tbl.appendChild(row1); // add the row to the end of the table body
+  }
+
+  //Logic for average of numeric columns
+  var row1 = document.createElement("tr");
+  var cell = document.createElement("td");
+  var cellText = document.createTextNode("Average : ");
+  cell.setAttribute('title', 'Average')
+  cell.appendChild(cellText);
+  row1.appendChild(cell);
+  for (var c = 1; c < col; c++) {
+    var cell = document.createElement("td");
+    if(c==2 || c==6 || c==7 || c==8 || c==9 || c==10) {
+      var cellText = document.createTextNode(sum[c]/noOfRows);
+      cell.setAttribute('title', ''+sum[c])
+    } else {
+      var cellText = document.createTextNode("");
+    }
+    cell.appendChild(cellText);
+    row1.appendChild(cell);
+  }
+  tbl.appendChild(row1)
+  div1.appendChild(tbl); // appends <table> into <div1>
+}
+
+//Search filter to scan every column's data
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  if (input.value.length===0) {
+    var myNode = document.getElementById("myTable")
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild);
+    }
+    drawTable(dataset);
+  } else {
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    tr[0].style.display = "";
+    for (i = 1; i < tr.length; i++) {
+      var tds = tr[i].getElementsByTagName("td");
+      tr[i].style.display = "none";
+      for (j=0; j < 12; j++) {
+        td = tds[j];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          }
+        }
+      }       
+    }
+  }
+}
+</script>
+
+<div name="pagination" style="display: flex;align-items: center;justify-content: center">
+  <button id="prev" type="button" onclick="prevpage()"><</button>
+  <button id="curr" type="button" disabled><script>document.write(pgnm)</script></button>
+  <button id="next" type="button" onclick="nextpage()">></button>
+</div>
+</body>
+</html>
