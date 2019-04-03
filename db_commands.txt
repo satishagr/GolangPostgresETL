@@ -1,0 +1,26 @@
+-- Table: public.building
+
+-- DROP TABLE public.building;
+
+CREATE TABLE public.building
+(
+    base_bbl text COLLATE pg_catalog."default" NOT NULL,
+    mpluto_bbl text COLLATE pg_catalog."default" NOT NULL,
+    bin double precision NOT NULL,
+    name text COLLATE pg_catalog."default",
+    lstmoddate date NOT NULL,
+    lststattype text COLLATE pg_catalog."default" NOT NULL,
+    cnstrct_yr double precision,
+    doitt_id double precision NOT NULL,
+    heightroof double precision,
+    feat_code integer NOT NULL,
+    groundelev double precision NOT NULL,
+    geom_source text COLLATE pg_catalog."default" NOT NULL
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.building
+    OWNER to postgres;
